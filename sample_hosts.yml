@@ -1,0 +1,6 @@
+---
+all:
+  hosts:
+    mcs-sv:
+      ansible_host: <target_host>
+      ansible_user: <login_user>

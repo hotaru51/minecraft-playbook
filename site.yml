@@ -1,0 +1,12 @@
+---
+- name: ansible test
+  hosts: all
+  become: false
+  gather_facts: false
+
+  vars:
+    message: ansible test
+
+  tasks:
+    - name: echo message
+      ansible.builtin.command: 'echo "{{ message }}"'

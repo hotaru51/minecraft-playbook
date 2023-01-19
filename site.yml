@@ -1,12 +1,25 @@
 ---
-- name: ansible test
+- name: OS Basic Settings
   hosts: all
-  become: false
+  become: true
   gather_facts: false
 
-  vars:
-    message: ansible test
-
   tasks:
-    - name: echo message
-      ansible.builtin.command: 'echo "{{ message }}"'
+    - name: apt upgrade
+      apt:
+        upgrade: yes
+        update_cache: yes
+
+    - name: install packages
+      apt:
+        pkg:
+          - language-pack-ja-base
+          - language-pack-ja
+          - zip
+          - git
+
+    - name: set locale ja_JP.UTF-8
+      command: 'localectl set-locale LANG=ja_JP.UTF-8'
+
+    - name: set timezone Asia/Tokyo
+      command: 'timedatectl set-timezone Asia/Tokyo'

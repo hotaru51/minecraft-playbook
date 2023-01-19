@@ -1,5 +1,5 @@
 ---
-- name: OS Basic Settings
+- name: OS basic settings
   hosts: all
   become: true
   gather_facts: false
@@ -23,3 +23,33 @@
 
     - name: set timezone Asia/Tokyo
       command: 'timedatectl set-timezone Asia/Tokyo'
+
+- name: install AWS CLI
+  hosts: all
+  become: true
+  gather_facts: false
+
+  vars:
+    awscli_package_url: 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip'
+    awscli_work_dir: /tmp/awscil_work
+
+  tasks:
+    - name: create awscli work directory
+      file:
+        path: '{{awscli_work_dir}}'
+        state: directory
+
+    - name: download package
+      get_url:
+        url: '{{ awscli_package_url }}'
+        dest: '{{ awscli_work_dir }}/awscliv2.zip'
+
+    - name: extract zip file
+      command:
+        cmd: 'unzip awscliv2.zip'
+        chdir: '{{ awscli_work_dir }}'
+
+    - name: install aws cli
+      command:
+        cmd: './aws/install'
+        chdir: '{{ awscli_work_dir }}'

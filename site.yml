@@ -1,12 +1,66 @@
 ---
-- name: ansible test
+- name: OS basic settings
   hosts: all
-  become: false
+  become: true
   gather_facts: false
 
   vars:
-    message: ansible test
+    user: minecraft
+    home_dir: /opt/minecraft
 
   tasks:
-    - name: echo message
-      ansible.builtin.command: 'echo "{{ message }}"'
+    - name: apt upgrade
+      apt:
+        upgrade: yes
+        update_cache: yes
+
+    - name: install packages
+      apt:
+        pkg:
+          - language-pack-ja-base
+          - language-pack-ja
+          - zip
+          - git
+
+    - name: set locale ja_JP.UTF-8
+      command: 'localectl set-locale LANG=ja_JP.UTF-8'
+
+    - name: set timezone Asia/Tokyo
+      command: 'timedatectl set-timezone Asia/Tokyo'
+
+    - name: create user
+      user:
+        name: '{{ user }}'
+        home: '{{ home_dir }}'
+        create_home: true
+
+- name: install AWS CLI
+  hosts: all
+  become: true
+  gather_facts: false
+
+  vars:
+    awscli_package_url: 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip'
+    awscli_work_dir: /tmp/awscil_work
+
+  tasks:
+    - name: create awscli work directory
+      file:
+        path: '{{awscli_work_dir}}'
+        state: directory
+
+    - name: download package
+      get_url:
+        url: '{{ awscli_package_url }}'
+        dest: '{{ awscli_work_dir }}/awscliv2.zip'
+
+    - name: extract zip file
+      unarchive:
+        src: '{{ awscli_work_dir }}/awscliv2.zip'
+        dest: '{{ awscli_work_dir }}'
+        remote_src: true
+
+    - name: install aws cli
+      command:
+        cmd: './aws/install'
+        chdir: '{{ awscli_work_dir }}'

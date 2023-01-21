@@ -4,6 +4,10 @@
   become: true
   gather_facts: false
 
+  vars:
+    user: minecraft
+    home_dir: /opt/minecraft
+
   tasks:
     - name: apt upgrade
       apt:
@@ -23,6 +27,12 @@
 
     - name: set timezone Asia/Tokyo
       command: 'timedatectl set-timezone Asia/Tokyo'
+
+    - name: create user
+      user:
+        name: '{{ user }}'
+        home: '{{ home_dir }}'
+        create_home: true
 
 - name: install AWS CLI
   hosts: all

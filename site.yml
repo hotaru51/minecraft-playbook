@@ -45,9 +45,10 @@
         dest: '{{ awscli_work_dir }}/awscliv2.zip'
 
     - name: extract zip file
-      command:
-        cmd: 'unzip awscliv2.zip'
-        chdir: '{{ awscli_work_dir }}'
+      unarchive:
+        src: '{{ awscli_work_dir }}/awscliv2.zip'
+        dest: '{{ awscli_work_dir }}'
+        remote_src: true
 
     - name: install aws cli
       command:

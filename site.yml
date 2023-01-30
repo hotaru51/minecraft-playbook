@@ -96,3 +96,9 @@
         group: minecraft
         remote_src: true
 
+    - name: put systemd unit file
+      copy:
+        src: files/systemd/minecraft.service
+        dest: /etc/systemd/system/minecraft.service
+        owner: root
+

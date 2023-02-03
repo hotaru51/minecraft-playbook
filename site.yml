@@ -102,3 +102,9 @@
         dest: /etc/systemd/system/minecraft.service
         owner: root
 
+    - name: put .screenrc
+      copy:
+        src: files/.screenrc
+        dest: /opt/minecraft
+        owner: minecraft
+        group: minecraft

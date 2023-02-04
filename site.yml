@@ -108,3 +108,10 @@
         dest: /opt/minecraft
         owner: minecraft
         group: minecraft
+
+    - name: create minecraft log directory
+      file:
+        path: /var/log/minecraft
+        state: directory
+        owner: minecraft
+        group: minecraft

@@ -101,6 +101,8 @@
         src: files/systemd/minecraft.service
         dest: /etc/systemd/system/minecraft.service
         owner: root
+      notify:
+        - daemon reload
 
     - name: put .screenrc
       copy:
@@ -115,3 +117,13 @@
         state: directory
         owner: minecraft
         group: minecraft
+
+  handlers:
+    - name: systemd daemon reload
+      systemd:
+        name: minecraft
+        daemon_reload: true
+        enabled: true
+      become: true
+      listen:
+        - daemon reload

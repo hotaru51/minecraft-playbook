@@ -118,6 +118,12 @@
         owner: minecraft
         group: minecraft
 
+    - name: put logrotate config
+      copy:
+        src: files/logrotate.d/minecraft
+        dest: /etc/logrotate.d/minecraft
+        owner: root
+
   handlers:
     - name: systemd daemon reload
       systemd:

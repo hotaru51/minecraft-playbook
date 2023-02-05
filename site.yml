@@ -64,3 +64,72 @@
       command:
         cmd: './aws/install'
         chdir: '{{ awscli_work_dir }}'
+
+- name: install minecraft server
+  hosts: all
+  become: true
+  gather_facts: false
+
+  vars_prompt:
+    - name: mc_server_soft_url
+      prompt: enter the minecraft server download URL
+      private: false
+
+  tasks:
+    - name: download minecraft server
+      get_url:
+        url: '{{ mc_server_soft_url }}'
+        dest: /tmp/bedrock-server.zip
+
+    - name: create minecraft server install directory
+      file:
+        path: /opt/minecraft/bedrock-server
+        state: directory
+        owner: minecraft
+        group: minecraft
+
+    - name: extract zip file
+      unarchive:
+        src: /tmp/bedrock-server.zip
+        dest: /opt/minecraft/bedrock-server
+        owner: minecraft
+        group: minecraft
+        remote_src: true
+
+    - name: put systemd unit file
+      copy:
+        src: files/systemd/minecraft.service
+        dest: /etc/systemd/system/minecraft.service
+        owner: root
+      notify:
+        - daemon reload
+
+    - name: put .screenrc
+      copy:
+        src: files/.screenrc
+        dest: /opt/minecraft
+        owner: minecraft
+        group: minecraft
+
+    - name: create minecraft log directory
+      file:
+        path: /var/log/minecraft
+        state: directory
+        owner: minecraft
+        group: minecraft
+
+    - name: put logrotate config
+      copy:
+        src: files/logrotate.d/minecraft
+        dest: /etc/logrotate.d/minecraft
+        owner: root
+
+  handlers:
+    - name: systemd daemon reload
+      systemd:
+        name: minecraft
+        daemon_reload: true
+        enabled: true
+      become: true
+      listen:
+        - daemon reload

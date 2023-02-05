@@ -1,0 +1,7 @@
+"/var/log/minecraft/minecraft.log" {
+    rotate 31
+    daily
+    dateext
+    missingok
+    copytruncate
+}
